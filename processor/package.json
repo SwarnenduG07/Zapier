@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "kafkajs": "^2.2.4",
     "prisma": "^5.19.1"
   }
 }
