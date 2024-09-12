@@ -18,9 +18,17 @@ const kafka = new Kafka({
              console.log({
                 partition,
                 offset: message.offset,
-                value: message.value?.toString(),
+                value: (parseInt(message.offset) + 1).toString()
              });  
+             await new Promise(r => setTimeout(r,1000));
+
+             await consumer.commitOffsets([{
+                topic: TOPIC_NAME,
+                partition: partition,
+                offset: message.offset,
+             }])
         },
+
      })
  }
  main();
