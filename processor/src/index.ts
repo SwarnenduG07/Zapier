@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import {Kafka} from "kafkajs";
-const TOPIC_NAME = "zap-events ";
+const TOPIC_NAME = "zap-events";
 
 const client = new PrismaClient();
 
@@ -23,6 +23,13 @@ async function main() {
                         value: r.zapRunId,
                     }))
              });
+             await client.zapRunOutBox.deleteMany({
+                where: {
+                    id: {
+                        in: pendingRow.map(x => x.id)
+                    }
+                 }
+             })
     }
 }
 

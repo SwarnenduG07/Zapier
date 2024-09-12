@@ -31,16 +31,18 @@ model Trigger {
   id          String @id @default(uuid())
   zapId       String @unique
   triggerId   String
-  type   AvailableTrigger @relation(fields: [triggerId], references: [id])
-  zap    Zap                 @relation(fields: [zapId], references: [id])
+  type        AvailableTrigger @relation(fields: [triggerId], references: [id])
+  zap         Zap                 @relation(fields: [zapId], references: [id])
 }
 
 model Action {
-   id        String @id @default(uuid())
-   zapId     String
-   zap       Zap    @relation(fields: [zapId], references: [id])
-   actionId String
-   type AvailableAction @relation(fields: [actionId], references: [id])
+   id               String @id @default(uuid())
+   zapId            String
+   zap              Zap    @relation(fields: [zapId], references: [id])
+   actionId         String
+   type             AvailableAction @relation(fields: [actionId], references: [id])
+   sortringOrder    Int @default(0)
+
 }
 
 model AvailableAction {
