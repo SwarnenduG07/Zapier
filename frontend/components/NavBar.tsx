@@ -12,12 +12,16 @@ export const NavBar = () => {
         </div> 
         <div className='flex space-x-3 mr-10'>
             <div>
-                <Button className='hover:bg-zinc-800 hover:text-white' variant="ghost">
+                <Button className='hover:bg-zinc-800 hover:text-white' variant="ghost"onClick={() => {
+                router.push("/signup")
+            }}>
                     Contact Sales
                 </Button>
             </div>
             <div>
-                <Button className='rounded-xl hover:bg-zinc-800 hover:text-white' variant="ghost">
+                <Button className='rounded-xl hover:bg-zinc-800 hover:text-white' variant="ghost" onClick={() => {
+                router.push("/signup")
+            }}>
                     Log in
                 </Button>
             </div>
