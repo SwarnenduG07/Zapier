@@ -8,7 +8,6 @@ import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-// Define the interface for the response data
 interface SigninResponse {
   token: string;
 }
@@ -19,10 +18,9 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
 
   const handleSignin = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form submission default behavior (page reload)
+    e.preventDefault(); 
     
     try {
-      // Make the API call and specify the type of the response
       const res = await axios.post<SigninResponse>(`${BACKEND_URL}/api/v1/user/signin`, {
         username: email,
         password,
@@ -56,7 +54,6 @@ export default function SignupPage() {
             </div>
           </div>
           <div className="flex-1 pt-6 px-4 border pb-6 mt-12 rounded">
-            {/* Attach the form handler here */}
             <form onSubmit={handleSignin}>
               <Input
                 label={"Email"}
