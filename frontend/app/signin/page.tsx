@@ -5,13 +5,36 @@ import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { BACKEND_URL } from "../config";
-import local from "next/font/local";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
-export default function() {
+// Define the interface for the response data
+interface SigninResponse {
+  token: string;
+}
+
+export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleSignin = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent form submission default behavior (page reload)
+    
+    try {
+      // Make the API call and specify the type of the response
+      const res = await axios.post<SigninResponse>(`${BACKEND_URL}/api/v1/user/signin`, {
+        username: email,
+        password,
+      });
+
+      // Store the token and redirect to the dashboard page
+      localStorage.setItem("token", res.data.token);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error during signin:", error);
+    }
+  };
 
   return (
     <div>
@@ -33,31 +56,24 @@ export default function() {
             </div>
           </div>
           <div className="flex-1 pt-6 px-4 border pb-6 mt-12 rounded">
-            <form>
+            {/* Attach the form handler here */}
+            <form onSubmit={handleSignin}>
               <Input
                 label={"Email"}
-                onChange={(e) => {setEmail(e.target.value)}}
+                onChange={(e) => setEmail(e.target.value)}
                 type="text"
                 placeholder="Your Email"
               />
               <Input
                 label={"Password"}
-                onChange={(e) => {setPassword(e.target.value)}}
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 placeholder="Your Password"
               />
               <div className="pt-4 pb-4">
-                <Button className="w-full rounded-full bg-orange-700" onClick={async()=> {
-                    const res = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, {
-                      username: email,
-                      password,
-                      name,
-                    });
-                    //@ts-ignore
-                    localStorage.setItem("token", res.data.token);
-                    router.push("/dashboard")
-                }}
-                >Get Started Free</Button>
+                <Button className="w-full rounded-full bg-orange-700" type="submit">
+                  Signin
+                </Button>
               </div>
             </form>
           </div>

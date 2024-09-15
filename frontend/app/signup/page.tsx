@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
+import  axios from "axios";
 
 export default function () {
     const router = useRouter();
@@ -48,7 +49,7 @@ export default function () {
                     password,
                     name,
                   });
-                  router.push("/login")
+                  router.push("/signin")
                 }}>Get Started Free </Button>
                 </div>
                </div>
