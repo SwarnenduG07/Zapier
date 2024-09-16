@@ -14,23 +14,17 @@ export const NavBar = () => {
             <div>
                 <Button className='hover:bg-zinc-800 hover:text-white' variant="ghost"onClick={() => {
                 router.push("/signup")
-            }}>
-                    Contact Sales
-                </Button>
+            }}>Contact Sales </Button>
             </div>
             <div>
                 <Button className='rounded-xl hover:bg-zinc-800 hover:text-white' variant="ghost" onClick={() => {
                 router.push("/signup")
-            }}>
-                    Log in
-                </Button>
+            }}>Log in </Button>
             </div>
             <div>
-              <Button className='rounded-3xl w-20 h-10 bg-amber-700 hover:bg-amber-800 hover:shadow-md' onClick={() => {
+              <Button className='rounded-3xl w-28 h-10 bg-amber-600 hover:bg-amber-800 hover:shadow-md' onClick={() => {
                 router.push("/signup")
-            }}>
-                    Signup
-                </Button>
+            }}>Signup</Button>
             </div>
         </div>
     </nav>
