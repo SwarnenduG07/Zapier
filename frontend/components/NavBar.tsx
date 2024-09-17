@@ -18,7 +18,7 @@ export const NavBar = () => {
             </div>
             <div>
                 <Button className='rounded-xl hover:bg-zinc-800 hover:text-white' variant="ghost" onClick={() => {
-                router.push("/signup")
+                router.push("/signin")
             }}>Log in </Button>
             </div>
             <div>
