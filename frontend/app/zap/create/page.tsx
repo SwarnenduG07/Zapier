@@ -27,7 +27,7 @@ export default function() {
     return <div>
         <NavBar />
         <div className="flex justify-end bg-slate-200 pt-4">
-           <Button className="w-44 bg-orange-600" onClick={ async() => {
+           <Button className="w-44 bg-orange-600" onClick={ async () => {
                if (!selectedTrigger?.id) {
                 return;
             }
@@ -41,16 +41,16 @@ export default function() {
                 }))
             }, {
                 headers: {
-                    Authorization: localStorage.getItem("token")
+                    Authorization: localStorage.getItem("token"),
+                    
                 }
             })
             
             router.push("/dashboard");
 
-           }}>
-               Publish
-           </Button>
+           }}>Publish</Button>
         </div>
+
         <div className="w-full bg-slate-400 min-h-screen flex flex-col justify-center">
             <div className="flex justify-center w-full">
             <ZapCell name={selectedTrigger?.name ? selectedTrigger.name : "Trigger"} index={1}  onClick={() => {
