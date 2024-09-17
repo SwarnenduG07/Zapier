@@ -2,10 +2,13 @@
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { ZapCell } from "@/components/ZapCell";
+import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 import { Zap } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function() {
+    const {availableActions, availableTriggers} = useAvailableActionsAndTriggers();
     const [selectedTrigger, setselectedTrigger] = useState<{id:string,
         name: string,
     }>();
@@ -37,7 +40,7 @@ export default function() {
                 ]}>+</Button>
             </div>
         </div>
-        {selectedModalindex && <Modal onSelect={( props: null |{name: string, id: string}) => {
+        {selectedModalindex && <Modal availableItems={selectedModalindex === 1 ? availableTriggers : availableActions} onSelect={( props: null |{name: string, id: string}) => {
             if (props === null) {
               setselectedModalindex(null)
               return;
@@ -88,27 +91,11 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
                     </button>
                 </div>
                 <div className="p-4 md:p-5 space-y-4">
-                   
-
-                    {/* {step === 0 && <div>{availableItems.map(({id, name, image}) => {
-                            return <div onClick={() => {
-                                if (isTrigger) {
-                                    onSelect({
-                                        id,
-                                        name,
-                                        metadata: {}
-                                    })
-                                } else {
-                                    setStep(s => s + 1);
-                                    setSelectedAction({
-                                        id,
-                                        name
-                                    })
-                                }
-                            }} className="flex border p-4 cursor-pointer hover:bg-slate-100">
-                                <img src={image} width={30} className="rounded-full" /> <div className="flex flex-col justify-center"> {name} </div>
-                            </div>
-                        })}</div>}                     */}
+                    {availableItems.map(({id, name, image}) => {
+                        return <div className="flex border">
+                             <img src={image} width={80} height={40} alt="Image"/> <div>{name}</div>
+                        </div>
+                    })}  
                 </div>
             </div>
         </div>
