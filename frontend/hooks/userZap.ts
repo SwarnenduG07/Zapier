@@ -2,7 +2,6 @@ import { BACKEND_URL } from "@/app/config";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-// Define the interface for the expected response
 export interface Zap {
     "id": string,
     "triggerId": string,

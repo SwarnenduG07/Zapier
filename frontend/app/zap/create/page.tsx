@@ -1,13 +1,16 @@
 "use client"
+import { BACKEND_URL } from "@/app/config";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { ZapCell } from "@/components/ZapCell";
 import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 import { Zap } from "lucide-react";
-import Image from "next/image";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function() {
+    const router = useRouter();
     const {availableActions, availableTriggers} = useAvailableActionsAndTriggers();
     const [selectedTrigger, setselectedTrigger] = useState<{id:string,
         name: string,
@@ -20,6 +23,31 @@ export default function() {
     const [selectedModalindex, setselectedModalindex] = useState<null | number>(null);
     return <div>
         <NavBar />
+        <div className="flex justify-end bg-slate-200 pt-4">
+           <Button className="w-44 bg-orange-600" onClick={ async() => {
+               if (!selectedTrigger?.id) {
+                return;
+            }
+
+            const response = await axios.post(`${BACKEND_URL}/api/v1/zap`, {
+                "availableTriggerId": selectedTrigger.id,
+                "triggerMetadata": {},
+                "actions": selectedActions.map(a => ({
+                    availableActionId: a.availableActionsId,
+                    actionMetadata: {}
+                }))
+            }, {
+                headers: {
+                    Authorization: localStorage.getItem("token")
+                }
+            })
+            
+            router.push("/dashboard");
+
+           }}>
+               Publish
+           </Button>
+        </div>
         <div className="w-full bg-slate-400 min-h-screen flex flex-col justify-center">
             <div className="flex justify-center w-full">
             <ZapCell name={selectedTrigger?.name ? selectedTrigger.name : "Trigger"} index={1}  onClick={() => {
@@ -66,7 +94,7 @@ export default function() {
     </div>
 } 
 
-function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (props: null | { name: string; id: string; metadata: any; }) => void, availableItems: {id: string, name: string, image: string;}[] }) {
+function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (props: null | { name: string; id: string; }) => void, availableItems: {id: string, name: string, image: string;}[] }) {
     const [step, setStep] = useState(0);
     const [selectedAction, setSelectedAction] = useState<{
         id: string;
@@ -92,8 +120,13 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
                 </div>
                 <div className="p-4 md:p-5 space-y-4">
                     {availableItems.map(({id, name, image}) => {
-                        return <div className="flex border">
-                             <img src={image} width={80} height={40} alt="Image"/> <div>{name}</div>
+                        return <div  onClick={() => {
+                            onSelect({
+                                id,
+                                name,
+                            })
+                        }} className="flex border p-4 cursor-pointer hover:bg-slate-400">
+                             <img src={image} width={30} alt="Image" className="rounded-full"/> <div className="flex-col justify-center">{name}</div>
                         </div>
                     })}  
                 </div>
