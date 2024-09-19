@@ -22,38 +22,40 @@ router.post("/", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, vo
     const parsedData = types_1.ZapSchema.safeParse(body);
     if (!parsedData.success) {
         return res.status(411).json({
-            message: "Incorrect "
+            message: "Incorrect inputs"
         });
     }
     const zapId = yield db_1.prismaClient.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-        const zap = yield db_1.prismaClient.zap.create({
-            data: {
-                userId: parseInt(id),
-                triggerId: "",
-                actions: {
-                    create: parsedData.data.actions.map((x, index) => ({
-                        actionId: x.availableActionId,
-                        sortingOrder: index,
-                        metadata: x.actionMetaData
-                    }))
-                }
-            }
-        });
-        const trigger = yield tx.trigger.create({
-            data: {
-                triggerId: parsedData.data.availableTriggerId,
-                zapId: zap.id,
-            }
-        });
-        yield tx.zap.update({
-            where: {
-                id: zap.id
-            },
-            data: {
-                triggerId: trigger.id
-            }
-        });
-        return zap.id;
+        try {
+            const zap = yield tx.zap.create({
+                data: {
+                    userId: parseInt(id),
+                    triggerId: "",
+                    actions: {
+                        create: parsedData.data.actions.map((x, index) => ({
+                            actionId: x.availableActionId,
+                            sortringOrder: index,
+                            metadata: x.actionMetaData,
+                        })),
+                    },
+                },
+            });
+            const trigger = yield tx.trigger.create({
+                data: {
+                    triggerId: parsedData.data.availableTriggerId,
+                    zapId: zap.id,
+                },
+            });
+            yield tx.zap.update({
+                where: { id: zap.id },
+                data: { triggerId: trigger.id },
+            });
+            return zap.id;
+        }
+        catch (error) {
+            console.error("Error in transaction", error);
+            throw error; // Ensure transaction rollback
+        }
     }));
     return res.json({
         zapId
