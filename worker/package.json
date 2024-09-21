@@ -11,9 +11,15 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.19.1",
-    "kafkajs": "^2.2.4"
+    "@solana/web3.js": "^1.95.3",
+    "bs58": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "kafkajs": "^2.2.4",
+    "nodemailer": "^6.9.15"
   },
   "devDependencies": {
+    "@types/node": "^22.5.5",
+    "@types/nodemailer": "^6.4.16",
     "prisma": "^5.19.1"
   }
 }

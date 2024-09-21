@@ -3,7 +3,7 @@ export function Parse(text: string,values: any ,startDelimeter = "{", endDelimet
     let endIndex =  1;
  
      let finalString  = "";
-    while (endIndex != text.length) {
+    while (endIndex < text.length) {
         if(text[startIndex] === startDelimeter)  {
             let endPoint = startIndex + 2;
             while (text[endPoint] !== endDelimeter) {
