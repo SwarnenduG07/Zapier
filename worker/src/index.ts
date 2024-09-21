@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { JsonObject } from "@prisma/client/runtime/library";
 import {Kafka} from "kafkajs";
 const TOPIC_NAME = "zap-events";
 
@@ -7,7 +8,7 @@ const prismaClient = new PrismaClient()
 
 const kafka = new Kafka({
     clientId: "outbox-processor",
-    brokers: ['localhost:9092']
+    brokers: ['localhost:9092'],
 })
 
  async function main() {
@@ -15,6 +16,10 @@ const kafka = new Kafka({
         groupId: "main-worker"
     });
     await consumer.connect();
+
+    const producer =  kafka.producer();
+    await producer.connect();
+
      await consumer.subscribe({ topic: TOPIC_NAME , fromBeginning: true });
      await consumer.run({
         eachMessage: async ({topic, partition, message}) => {
@@ -54,18 +59,33 @@ const kafka = new Kafka({
                   console.log("Current action not founded");
                   return;
                }
+               console.log(currentAction);
                 if(currentAction?.type.id === "email") {
+                  console.log("Sending out email");
+                  const body = (currentAction.metadata as JsonObject)?.body;
+                  const to =  (currentAction.metadata as JsonObject)?.email;
+
+                  const zapRunMetadata = zapRunDetails?.metadata;
                   
                 }
                 if(currentAction?.type.id === "send-sol") {
-
+                  console.log("Sending out solana");
+                  
                 }
 
                await new Promise(r => setTimeout(r,500));
                const zapId = message.value?.toString()   
                const lastState = (zapRunDetails?.zap.actions?.length || 1) -1;
                if(lastState !== stage) {
-              
+                  await producer.send({
+                     topic: TOPIC_NAME,
+                     messages: [{
+                        value: JSON.stringify({
+                           stage:stage + 1,
+                           zapRunId
+                        })
+                     }]
+                  })
                }
                console.log("Prosseong done");
                 
