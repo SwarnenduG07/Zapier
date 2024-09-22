@@ -4,7 +4,7 @@ import { Input } from "@/components/Input";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../config";
+import { BACKEND_URL } from "../../config";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 

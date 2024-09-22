@@ -4,11 +4,11 @@ import { Input } from "@/components/Input";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { BACKEND_URL } from "../config";
 import { useRouter } from "next/navigation";
 import  axios from "axios";
+import { BACKEND_URL } from "@/app/config";
 
-export default function () {
+export default function Signup() {
     const router = useRouter();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
