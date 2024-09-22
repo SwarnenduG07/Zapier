@@ -81,9 +81,9 @@ router.get("/verifyemail", async (req, res) =>{
     const token = req.query.token;
 
     const tokenString = Array.isArray(token) ? token : [token];
-    if(!tokenString) {
-        return res.json({
-            messsage: "Invalid token"
+    if( typeof tokenString !== 'string') {
+        return res.status(400).json({
+            messsage: "Invalid token formate"
         });
     }
 
