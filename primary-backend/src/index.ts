@@ -1,9 +1,9 @@
 import express from "express";
-import { userRouter } from "./router/user";
 import { zapRouter } from "./router/zap";
 import   cors from "cors";
 import { triggerRouter } from "./router/triggerRouter";
 import { actionRouter } from "./router/actions";
+import { userRouter } from "./router/user";
 
 const app = express();
 app.use(express.json());
@@ -21,5 +21,5 @@ app.use("/api/v1/action", actionRouter);
 
 
 app.listen(3005, () => {
-    console.log("Connneted");
+    console.log("Connneted in port 3005");
 })

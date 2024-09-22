@@ -21,6 +21,12 @@ model User {
   verificationToken       String?
   verificationTokenExpiry DateTime?
   isVerified              Boolean @default(false)
+
+  resetToken              String?
+  resetTokenExpiry        DateTime?
+
+  createdAt               DateTime @default(now())
+  updateAt                DateTime? @updatedAt
   zaps                     Zap[]
 }
 model Zap {

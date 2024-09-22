@@ -7,10 +7,11 @@ import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import bcrypt from 'bcrypt';
 
-const router = Router();
 
 const generateToken = () => crypto.randomBytes(20).toString("hex");
+const router = Router();
 
 
 const transporter = nodemailer.createTransport({
@@ -48,11 +49,12 @@ router.post("/signup", async (req, res) => {
     const token = generateToken();
     const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
+    const hashedpassword = await bcrypt.hash(parsedData.data.password, 20);
+
      const user = await prismaClient.user.create({
         data: {
             email: parsedData.data.username,
-            // TODO: Dont store passwords in plaintext, hash it
-            password: parsedData.data.password,
+            password: hashedpassword,
             name: parsedData.data.name,
             verificationToken: token,
             verificationTokenExpiry: expiration,
@@ -126,11 +128,9 @@ router.post("/signin", async (req, res) => {
             message: "Incorrect inputs"
         })
     }
-
     const user = await prismaClient.user.findFirst({
         where: {
             email: parsedData.data.username,
-            password: parsedData.data.password
         }
     });
     
@@ -138,6 +138,13 @@ router.post("/signin", async (req, res) => {
         return res.status(403).json({
             message: "Sorry credentials are incorrect"
         })
+    }
+    const isPasswordValid = await bcrypt.compare(parsedData.data.password, user.password);
+
+    if (!isPasswordValid) {
+        return res.status(403).json({
+            message: "Sorry, credentials are incorrect"
+        });
     }
 
     const token = jwt.sign({
@@ -149,7 +156,87 @@ router.post("/signin", async (req, res) => {
     });
 })
 
+router.post("/forgotpassword", async (req, res) => {
+    const { username } = req.body;
+    try {
+        const user = await prismaClient.user.findFirst({
+            where: { email: username }
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const reset = crypto.randomBytes(20).toString("hex");
+        const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); 
+
+        await prismaClient.user.update({
+            where: { email: username },
+            data: {
+                resetToken: reset, 
+                resetTokenExpiry
+            }
+        });
+
+        const resetUrl = `https://yourdomain.com/reset-password?token=${reset}`;
+        const mailOptions = {
+            from: 'noreply@yourdomain.com',
+            to: username,
+            subject: "Password Reset Request",
+            html: `<p>You requested a password reset. Click the link below to reset your password:</p><a href="${resetUrl}">Reset Password</a>`
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        return res.json({ message: "Password reset email sent" });
+    } catch (e) {
+        console.log("Error while resetting the password", e);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+    });
+
+router.post("/reset-password", async (req,res) => {
+    const { token ,  newPassword } = req.body
+    try {
+        const user = await prismaClient.user.findFirst({
+            where: {
+                resetToken: token,
+                resetTokenExpiry: {
+                gte: new Date()
+                }
+            }
+        });
+        if (!user) {
+            return res.json({
+                message: "Invalid or expired token"
+            })
+        }
+
+        const hashedpassword = await bcrypt.hash(newPassword, 10);
+        await prismaClient.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                password: hashedpassword,
+                resetToken: null,
+                resetTokenExpiry: null,
+            }
+        });
+        res.json({
+            message: "Password reset succecful"
+        })
+    } catch (e) {
+        console.log("Error while resating passwprd",e);
+        res.status(500).json({
+            message: "Internal server error"
+        })
+        
+    }
+})
+
 router.get("/", authMiddleware, async (req, res) => {
+    // TODO: Fix the type
     // @ts-ignore
     const id = req.id;
     const user = await prismaClient.user.findFirst({
@@ -168,7 +255,3 @@ router.get("/", authMiddleware, async (req, res) => {
 })
 
 export const userRouter = router;
-
-function sendEmail() {
-    throw new Error("Function not implemented.");
-}
