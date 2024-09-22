@@ -8,21 +8,22 @@ import { JWT_SECRET } from "../config";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import bcrypt from 'bcrypt';
+import { date } from "zod";
 
 
 const generateToken = () => crypto.randomBytes(20).toString("hex");
 const router = Router();
 
 
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_ENDPOINT,
-    port: 587,
-    secure: false, // upgrade later with STARTTLS
-    auth: {
-      user: process.env.SMTP_USERNAME,
-      pass: process.env.SMTP_PASSWORD,
-    },
-})
+// const transporter = nodemailer.createTransport({
+//     host: process.env.SMTP_ENDPOINT,
+//     port: 587,
+//     secure: false, // upgrade later with STARTTLS
+//     auth: {
+//       user: process.env.SMTP_USERNAME,
+//       pass: process.env.SMTP_PASSWORD,
+//     },
+// })
 
 router.post("/signup", async (req, res) => {
     const body = req.body;
@@ -34,13 +35,15 @@ router.post("/signup", async (req, res) => {
             message: "Incorrect inputs"
         })
     }
-
+     const start = Date.now();
     const userExists = await prismaClient.user.findFirst({
         where: {
             email: parsedData.data.username
         }
     });
-
+   const end = Date.now();
+   console.log(`Db time : ${end - start}ms`);
+   
     if (userExists) {
         return res.status(403).json({
             message: "User already exists"
@@ -48,9 +51,11 @@ router.post("/signup", async (req, res) => {
     }
     const token = generateToken();
     const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    const hashedpassword = await bcrypt.hash(parsedData.data.password, 20);
-
+ const startTime = Date.now();
+  const hashedpassword = await bcrypt.hash(parsedData.data.password, 10);
+  const endTime = Date.now();
+  console.log(`Total time is: ${endTime - startTime}ms`);
+  
      const user = await prismaClient.user.create({
         data: {
             email: parsedData.data.username,
@@ -61,8 +66,10 @@ router.post("/signup", async (req, res) => {
             isVerified: false,
         }
     })
+    console.log("after hash");
+    
 
-    const vericationurl = `idonthavedomail.com/verify-email?token=${token}`;
+    const vericationurl = `idonthavedomail.com/verifyemail?token=${token}`;
 
     const mailoptions = {
         from: 'noreply@yourdomail.com',
@@ -71,7 +78,7 @@ router.post("/signup", async (req, res) => {
         html: `<p>Place verify your email by clicking the link below:</p> <a href="${vericationurl}"> Verify Email</a>`
     }
 
-    await transporter.sendMail(mailoptions);
+    // await transporter.sendMail(mailoptions);
 
     return res.json({
         message: "Please verify your account by checking your email"
@@ -119,7 +126,7 @@ router.get("/verifyemail", async (req, res) =>{
     });
 })
 
-router.post("/signin", async (req, res) => {
+router.post("/signin",  async (req, res) => {
     const body = req.body;
     const parsedData = SigninSchema.safeParse(body);
 
@@ -139,13 +146,19 @@ router.post("/signin", async (req, res) => {
             message: "Sorry credentials are incorrect"
         })
     }
+    const starthash = Date.now();
     const isPasswordValid = await bcrypt.compare(parsedData.data.password, user.password);
+    const endhash = Date.now();
+    console.log(`total time for compare: ${endhash - starthash}ms`);
+    
 
     if (!isPasswordValid) {
         return res.status(403).json({
-            message: "Sorry, credentials are incorrect"
+            message: "Invalid  Credentials"
         });
     }
+    console.log("after compare");
+    
 
     const token = jwt.sign({
         id: user.id
@@ -186,7 +199,7 @@ router.post("/forgotpassword", async (req, res) => {
             html: `<p>You requested a password reset. Click the link below to reset your password:</p><a href="${resetUrl}">Reset Password</a>`
         };
 
-        await transporter.sendMail(mailOptions);
+        // await transporter.sendMail(mailOptions);
 
         return res.json({ message: "Password reset email sent" });
     } catch (e) {
