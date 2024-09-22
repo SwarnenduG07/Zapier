@@ -47,10 +47,10 @@ export default function SigninPage() {
   };
 
   return (
-    <div>
+    <div className="flex flex-col justify-between">
         <NavBar />
-            <div className="flex">
-            <div className="flex  max-w-4xl">
+            <div className="flex mr">
+            <div className="flex  pt-20 max-w-4xl">
               <div className="flex-1 pt-20 px-4">
                 <div className="font-semibold text-3xl pb-4">
                   Join millions worldwide who automate their work using Zapier.
@@ -66,10 +66,11 @@ export default function SigninPage() {
                 </div>
                 </div>
               </div>
-          <section className="" onSubmit={handleSignin}>
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-            <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo"/>
+              <div className="ml-20">
+                <section  onSubmit={handleSignin}>
+                <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+               <a href="#" className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+               <img className="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg" alt="logo"/>
             Zapier    
         </a>
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
@@ -107,11 +108,11 @@ export default function SigninPage() {
                   </p>
               </form>
           </div>
-      </div>
+        </div>
+     </div>
+   </section>
   </div>
-  </section>
-  
-</div>
+ </div>
 </div>
   );
 }
