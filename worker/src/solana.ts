@@ -37,19 +37,46 @@ export async function sendSol(zapRunId: string , to: string, amount: string) {
      
     try {
        const signature = await sendAndConfirmTransaction(connection, transferTransaction, [keypair]);
-      console.log("sol Sent!")
-      await prismaCLient.transaction.create({
+      console.log("sol Sent!" ,signature)
+      if(!existingTransaction) {
+          await prismaCLient.transaction.create({
+            data: {
+                zapRunId,
+                txSignature: signature,
+                type: "send-sol",
+                status: "panding",
+            }
+        });
+    } else {
+       await prismaCLient.transaction.update({
+        where: {
+          id: existingTransaction.id,
+        },
         data: {
-          zapRunId,
           txSignature: signature,
-          type: "send-sol",
-          status: "panding",
-        }
-      });
-      console.log("SOl send! Trasaction Signature : ", signature);
+          status: "pending",
+          }
+       })
+    }
+     await prismaCLient.transaction.update({
+      where: {
+        zapRunId,
+      },
+      data: {
+        status: "finalized"
+       },
+     })
+      console.log(`trasaction for zapRunID ${zapRunId} finalized`);
       
     } catch (e: any) {
        console.log("Error while sending Sol", e);
+
+       await prismaCLient.transaction.update({
+        where: {zapRunId},
+        data: {
+          status: "failed",
+        }
+       });
        
     }
 

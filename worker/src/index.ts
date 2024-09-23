@@ -77,7 +77,7 @@ const kafka = new Kafka({
                   const amount = Parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
                   const address =  Parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
                   console.log(`Sending out sol of ${amount} to adress ${address}`);
-                  await sendSol(address, amount);
+                  await sendSol(address, amount, zapRunId);
                   
                 }
 

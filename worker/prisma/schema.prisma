@@ -71,9 +71,21 @@ model ZapRun {
   metadata Json
   zap      Zap     @relation(fields: [zapId], references: [id])
   zapRunOutBox  ZapRunOutBox?
+  transaction   Transaction[]
 }
 model ZapRunOutBox {
   id       String @id @default(uuid())
   zapRunId String @unique
   zapRun    ZapRun @relation(fields: [zapRunId], references: [id])
+}
+
+model Transaction {
+  id          Int @id @default(autoincrement())
+  zapRunId    String @unique
+  txSignature String
+  type        String
+  status      String
+  createdAt   DateTime @default(now())
+  updateAt    DateTime @updatedAt
+  zaprun      ZapRun   @relation(fields: [zapRunId], references: [id]) 
 }
