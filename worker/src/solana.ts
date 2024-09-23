@@ -24,7 +24,7 @@ export async function sendSol(zapRunId: string , to: string, amount: string) {
         console.log(`Transaction for zaprunID ${zapRunId} is already confremed`);
         return;
        } else {
-        console.log(`Trasaction of zaprunId ${zapRunId} is pending or field. reattepting...`);
+        console.log(`Trasaction of zaprunId ${zapRunId} is pending or field. Reattepting...`);
        }
     }
     const transferTransaction = new Transaction().add(
@@ -63,8 +63,8 @@ export async function sendSol(zapRunId: string , to: string, amount: string) {
         zapRunId,
       },
       data: {
-        status: "finalized"
-       },
+        status: "finalized",
+        },
      })
       console.log(`trasaction for zapRunID ${zapRunId} finalized`);
       
