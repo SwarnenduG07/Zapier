@@ -10,7 +10,7 @@ import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 
 
@@ -62,7 +62,7 @@ export default function() {
                 }} name={selectedTrigger?.name ? selectedTrigger.name : "Trigger"} index={1} />
             </div>
             <div className="w-full pt-2 pb-2">
-                {selectedActions.map((action, index) => <div className="pt-2 flex justify-center"> <ZapCell onClick={() => {
+                {selectedActions.map((action) => <div className="pt-2 flex justify-center"> <ZapCell onClick={() => {
                     setSelectedModalIndex(action.index);
                 }} name={action.availableActionName ? action.availableActionName : "Action"} index={action.index} /> </div>)}
             </div>
@@ -76,7 +76,7 @@ export default function() {
                             availableActionName: "",
                             metadata: {}
                         }])
-                    }}><div className="text-2xl">
+                    }} className="bg-orange-700"><div className="text-2xl w-20">
                         +
                     </div></Button>
                 </div>
