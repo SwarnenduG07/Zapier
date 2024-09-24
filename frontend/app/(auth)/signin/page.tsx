@@ -37,7 +37,7 @@ export default function SigninPage() {
       if (rememberMe) {
         localStorage.setItem("token", res.data.token);
       } else {
-        sessionStorage.setItem("token", res.data.token);
+        localStorage.setItem("token", res.data.token);
       }
       router.push("/dashboard");
     } catch (error) {

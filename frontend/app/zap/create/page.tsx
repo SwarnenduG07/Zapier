@@ -47,7 +47,7 @@ export default function() {
                     }))
                 }, {
                     headers: {
-                        Authorization: localStorage.getItem("token")
+                        Authorization: localStorage.getItem("token"), 
                     }
                 })
                 
