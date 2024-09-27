@@ -2,26 +2,23 @@ import React, { useState } from "react";
 import { Handle } from "reactflow"; // Import Handle from React Flow
 import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 import { Button } from "@/components/ui/button"; // Assuming you have this Button component
+import { Input } from "../Input";
 
 const ActionNode = () => {
-  // Fetch available actions (similar to available triggers)
   const { availableActions } = useAvailableActionsAndTriggers();
-
-  // State for selected action
-  const [selectedAction, setSelectedAction] = useState<{ id: string; name: string }>();
-
-  // State to control the modal visibility
+  const [selectedAction, setSelectedAction] = useState<{ id: string; name: string } | null>(null);
+  const [step, setStep] = useState(0);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [metadata, setMetadata] = useState({}); // Metadata state to store email or solana data
 
   return (
     <div className="bg-[#1f2d00] border border-dotted border-[#b8e600] rounded-lg p-4 shadow-lg text-white w-80 relative">
       {/* Input Handle positioned at the top of the node */}
       <Handle
-        type="target" 
-        //@ts-expect-error
-        position="top" // Position handle at the top of the node
-        id="input" // Unique ID for the handle
-        style={{ background: "#555", top: -10 }} // Adjust style and positioning if needed
+        type="target"
+        position="top"
+        id="input"
+        style={{ background: "#555", top: -10 }}
       />
 
       {/* Action Button with Icon */}
@@ -34,20 +31,26 @@ const ActionNode = () => {
           {selectedAction ? selectedAction.name : "Select Action"}
         </button>
       </div>
-
       <p className="text-sm">
         <strong>2.</strong> Choose the action to be performed.
       </p>
 
+      {/* Conditionally render the selector based on selected action */}
+      {selectedAction?.name === "Email" && (
+        <EmailSelector setMetadata={setMetadata} />
+      )}
+      {selectedAction?.name === "Solana" && (
+        <SolanaSelector setMetadata={setMetadata} />
+      )}
+
       {/* Modal for selecting Action */}
       {isModalVisible && (
         <ActionModal
-        //@ts-expect-error
           availableActions={availableActions}
           onClose={() => setIsModalVisible(false)}
           onSelectAction={(action) => {
-            setSelectedAction(action);
-            setIsModalVisible(false);
+            setSelectedAction(action); // Set the selected action when clicked
+            setIsModalVisible(false); // Close the modal after selecting
           }}
         />
       )}
@@ -88,7 +91,6 @@ function ActionModal({
               <span className="sr-only">Close modal</span>
             </button>
           </div>
-
           {/* Modal Body: List of Actions */}
           <div className="p-4 space-y-4">
             {availableActions.map(({ id, name, image }) => (
@@ -102,7 +104,6 @@ function ActionModal({
               </div>
             ))}
           </div>
-
           {/* Modal Footer (optional) */}
           <div className="flex justify-end p-4 border-t">
             <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-400 text-white px-4 py-2 rounded-md">
@@ -115,4 +116,44 @@ function ActionModal({
   );
 }
 
+
+function EmailSelector({setMetadata}: {
+    setMetadata: (params: any) => void;
+}) {
+    const [email, setEmail] = useState("");
+    const [body, setBody] = useState("");
+
+    return <div>
+        <Input label={"To"} type={"text"} placeholder="To" onChange={(e) => setEmail(e.target.value)}></Input>
+        <Input label={"Body"} type={"text"} placeholder="Body" onChange={(e) => setBody(e.target.value)}></Input>
+        <div className="pt-2">
+            <Button onClick={() => {
+                setMetadata({
+                    email,
+                    body
+                })
+            }}>Submit</Button>
+        </div>
+    </div>
+}
+
+function SolanaSelector({setMetadata}: {
+    setMetadata: (params: any) => void;
+}) {
+    const [amount, setAmount] = useState("");
+    const [address, setAddress] = useState("");    
+
+    return <div>
+        <Input label={"To"} type={"text"} placeholder="To" onChange={(e) => setAddress(e.target.value)}></Input>
+        <Input label={"Amount"} type={"text"} placeholder="To" onChange={(e) => setAmount(e.target.value)}></Input>
+        <div className="pt-4">
+        <Button onClick={() => {
+            setMetadata({
+                amount,
+                address
+            })
+        }}>Submit</Button>
+        </div>
+    </div>
+}
 export default ActionNode;

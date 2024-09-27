@@ -1,5 +1,5 @@
 "use client";
-import ActionNode from "@/components/Node/ActionTrigger";
+import  ActionNode  from "@/components/Node/ActionTrigger";
 import TriggerNode from "@/components/Node/TrigerNdoe";
 import React, { useCallback, useState, useEffect } from "react";
 import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
@@ -16,7 +16,7 @@ type ActionType = {
 // Define the node types mapping
 const nodeTypes = {
   triggerNode: TriggerNode,
-  actionNode: ActionNode,
+  actionNode : ActionNode
 };
 
 // Initial set of nodes with one Trigger Node and one Action Node
@@ -90,14 +90,27 @@ export default function App() {
 
   return (
     <div className="w-screen h-screen relative">
-    
+      {/* Button to add Action nodes, placed at the midpoint of the nodes */}
+      <button
+        className="absolute z-10 p-3 text-white bg-orange-500 rounded-full hover:bg-orange-400 focus:outline-none"
+        style={{
+          left: `${buttonPosition.x}px`,
+          top: `${buttonPosition.y}px`,
+          transform: "translate(-50%, -50%)", // Center the button
+        }}
+        onClick={() => handleAddAction("custom-id", "Custom Action", { customKey: "customValue" })}
+      >
+        +
+      </button>
+
+      {/* Render React Flow with Nodes and Edges */}
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        nodeTypes={nodeTypes} 
+        nodeTypes={nodeTypes} // Include the custom TriggerNode in nodeTypes
         fitView
         style={{ background: "#f0f0f0" }}
       />
