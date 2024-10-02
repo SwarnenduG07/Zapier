@@ -1,18 +1,18 @@
-"use client";
+"use client"
 import { BACKEND_URL } from "@/app/config";
-import ActionNode from "@/components/Node/ActionTrigger";
-import TriggerNode from "@/components/Node/TrigerNdoe";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
-import ReactFlow, { useEdgesState, useNodesState, addEdge } from "reactflow";
+import React, { useCallback, useState } from "react";
+import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
+import TriggerNode from "@/components/Node/TrigerNdoe";
+import ActionNode from "@/components/Node/ActionTrigger";
 
 // Define the node types mapping
 const nodeTypes = {
-  triggerNode: TriggerNode,
-  actionNode: ActionNode,
+  triggerNode: (props : any) => <TriggerNode {...props} setSelectedTrigger={props.setSelectedTrigger} />,
+  actionNode: (props: any) => <ActionNode {...props} setSelectedActions={props.setSelectedActions} />,
 };
 
 // Initial set of nodes with one Trigger Node and one Action Node
@@ -20,16 +20,17 @@ const initialNodes = [
   {
     id: "trigger-1",
     position: { x: 50, y: 50 },
-    data: { label: "Trigger Node" },
+    data: { label: "Trigger Node", setSelectedTrigger: null }, // Add setSelectedTrigger to TriggerNode data
     type: "triggerNode",
   },
   {
     id: "action-1",
     position: { x: 50, y: 150 },
-    data: { label: "Action Node" },
+    data: { label: "Action Node" , setSelectedActions : null},
     type: "actionNode",
   },
 ];
+
 const initialEdges = [{ id: "edge-1", source: "trigger-1", target: "action-1" }];
 
 export default function App() {
@@ -37,55 +38,31 @@ export default function App() {
   const [selectedTrigger, setSelectedTrigger] = useState<{
     id: string;
     name: string;
-  }>();
-  const [selectedActions, setSelectedActions] = useState<
-    {
-      index: number;
-      availableActionId: string;
-      availableActionName: string;
-      metadata: any;
-    }[]
-  >([]);
+  } | null>(null);
+  const [selectedActions, setSelectedActions] = useState<{
+    index: number;
+    availableActionId: string;
+    availableActionName: string;
+    metadata: any;
+  }[]>([]);
+
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  // Function to add a new Action node based on custom fields
-  const handleAddAction = (actionId: string, actionName: string, actionMetadata: Record<string, any>) => {
-    const newNode = {
-      id: `action-${nodes.length + 1}`,
-      position: { x: 10, y: 100 },
-      data: {
-        label: `Action Node: ${actionName}`,
-        availableActionId: actionId,
-        availableActionName: actionName,
-        metadata: actionMetadata,
-      },
-    };
-
-    // Update the nodes state with the new Action node
-    setNodes((nds) => [...nds, newNode]);
-
-    // Update the selectedActions state
-    setSelectedActions((actions) => [
-      ...actions,
-      {
-        index: nodes.length + 1,
-        availableActionId: actionId,
-        availableActionName: actionName,
-        metadata: actionMetadata,
-      },
-    ]);
-  };
-
   // Handle connecting nodes
-  const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onConnect = useCallback(
+    (params: any) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
 
-  // Publish button handler
+  // Handle Publish Button Click
   const handlePublish = async () => {
     if (!selectedTrigger?.id) {
-      return; // Ensure a trigger is selected
+      alert("Please select a trigger before publishing."); // Alert if no trigger selected
+      return;
     }
 
+    // Prepare the data for publishing
     try {
       const response = await axios.post(`${BACKEND_URL}/api/v1/zap`, {
         availableTriggerId: selectedTrigger.id,
@@ -96,31 +73,53 @@ export default function App() {
         })),
       }, {
         headers: {
-          Authorization: localStorage.getItem("token"), // Use your authentication token
-        },
+          Authorization: localStorage.getItem("token"),
+        }
       });
-      
-      console.log('Published successfully:', response.data);
-      router.push("/dashboard");
+
+      if (response.status === 200) {
+        alert("Process published successfully!"); // Success message
+        router.push("/dashboard"); // Redirect to dashboard on success
+      } else {
+        alert("Error publishing the process. Please try again."); // Alert on error
+      }
     } catch (error) {
-      console.error('Error publishing:', error);
+      console.error("Error during publishing:", error);
+      alert("Error publishing the process. Please try again."); // Alert on error
     }
   };
 
   return (
     <div className="w-screen h-screen relative">
       <div className="flex justify-end bg-slate-200 p-4">
-        <Button onClick={handlePublish}>Publish</Button>
+        <Button onClick={handlePublish}>Publish</Button> {/* Bind Publish Button to handlePublish function */}
       </div>
 
       {/* Render React Flow with Nodes and Edges */}
       <ReactFlow
-        nodes={nodes}
+        nodes={nodes.map((node) => {
+          if (node.type === "triggerNode") {
+            return {
+              ...node,
+              data: { ...node.data, setSelectedTrigger }, // Pass setSelectedTrigger to trigger node
+            };
+          } else if (node.type === "actionNode") {
+                return {
+                  ...node,
+                  data: {
+                    ...node.data,
+                    setSelectedActions,
+                    selectedActions 
+                  }
+                }
+          }
+          return node;
+        })}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        nodeTypes={nodeTypes}
+        nodeTypes={nodeTypes} // Include the custom TriggerNode in nodeTypes
         fitView
         style={{ background: "#f0f0f0" }}
       />
