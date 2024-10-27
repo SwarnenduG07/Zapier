@@ -3,11 +3,16 @@ import { BACKEND_URL } from "@/app/config";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useState } from "react";
-import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
+import ReactFlow, { useNodesState, useEdgesState, addEdge, Background, Controls, MiniMap } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
 import TriggerNode from "@/components/Node/TrigerNdoe";
 import ActionNode from "@/components/Node/ActionTrigger";
+import '@xyflow/react/dist/style.css';
+import { Switch } from "@/components/ui/switch";
+
+
+const gridSize = 20;
 
 // Define the node types mapping
 const nodeTypes = {
@@ -94,10 +99,31 @@ export default function App() {
     }
   };
 
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <div className="w-screen h-screen relative ">
-      <div className="flex justify-end bg-slate-700 p-4">
-        <Button onClick={handlePublish}>Publish</Button> {/* Bind Publish Button to handlePublish function */}
+    <div className={`w-screen h-screen relative ${isDarkMode ? 'dark' : ''}`}>
+
+
+      <div className="flex justify-between items-center p-4 bg-gradient-to-tl from-20% from-neutral-600  to-neutral-900  dark:bg-gray-800 transition-colors duration-200 backdrop:back">
+        <div 
+          
+        >
+          <Switch
+            checked={isDarkMode}
+            onCheckedChange={toggleDarkMode}
+          />
+        </div>
+        <Button 
+          onClick={handlePublish} 
+          className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-full"
+        >
+          Publish
+        </Button>
       </div>
 
       {/* Render React Flow with Nodes and Edges */}
@@ -126,8 +152,15 @@ export default function App() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         fitView
-        className="bg-black"
-      />
+        className="bg-white dark:bg-gray-900 transition-colors duration-200"
+        snapGrid={[gridSize, gridSize]}
+      >
+        <Background color="#aaa" gap={gridSize} />
+        <Controls />
+        <div className="bg-red-600">
+          <MiniMap/>
+        </div>
+      </ReactFlow>
     </div>
   );
 }
