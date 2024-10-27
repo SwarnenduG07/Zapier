@@ -1,6 +1,5 @@
 "use client";
 import { CheckFeature } from "@/components/CheckFetures";
-import { Input } from "@/components/Input";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -17,7 +16,7 @@ export default function Signup() {
   const handleSignup = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
+        await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
         username: email,
         password,
         name,

@@ -1,6 +1,5 @@
 "use client";
 import { CheckFeature } from "@/components/CheckFetures";
-import { Input } from "@/components/Input";
 import { NavBar } from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
