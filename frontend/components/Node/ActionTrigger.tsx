@@ -5,14 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "../Input";
 import { ZapCell } from "../ZapCell";
 
-const ActionNode = () => {
-  const { availableActions } = useAvailableActionsAndTriggers(); // Removed availableTriggers
-  const [selectedActions, setSelectedActions] = useState<{
-    index: number;
-    availableActionId: string;
-    availableActionName: string;
-    metadata: any;
-  }[]>([]);
+const ActionNode = ({ data }: { data: any }) => {
+  const { availableActions } = useAvailableActionsAndTriggers();
+  const {  selectedActions ,setSelectedActions } = data;
+
+  const arry = [
+    "2", "234","34","3"
+  ]
 
   const [selectedModelIndex, setSelectedModalIndex] = useState<number | null>(null);
 
@@ -28,7 +27,7 @@ const ActionNode = () => {
       <div className="flex items-center space-x-2 mb-2">
         <span className="flex justify-center items-center w-6 h-6 rounded-full bg-green-500">⚙️</span>
         <div className="w-full pt-2 pb-2">
-          {selectedActions.map((action) => (
+          {selectedActions.map((action: any) => (
             <div key={action.index} className="pt-2 flex justify-center">
               <ZapCell
                 onClick={() => setSelectedModalIndex(action.index)}
@@ -46,26 +45,29 @@ const ActionNode = () => {
         </button>
       </div>
 
+
+
       <p className="text-sm">
         <strong>2.</strong> Choose the action to be performed.
       </p>
 
       {selectedModelIndex !== null && (
         <Modal
-          availableItems={availableActions} // Only availableActions now
+          availableItems={availableActions}
           onSelect={(props: null | { name: string; id: string; metadata: any }) => {
             if (props === null) {
               setSelectedModalIndex(null);
               return;
             }
-            setSelectedActions((a) => {
-              let newActions = [...a];
-              newActions[selectedModelIndex - 1] = {
-                index: selectedModelIndex,
-                availableActionId: props.id,
-                availableActionName: props.name,
-                metadata: props.metadata,
-              };
+            const newAction = {
+              index: selectedModelIndex,
+              availableActionId: props.id,
+              availableActionName: props.name,
+              metadata: props.metadata,
+            };
+            setSelectedActions((prevActions: any) => {
+              const newActions = [...prevActions];
+              newActions[selectedModelIndex - 1] = newAction;
               return newActions;
             });
             setSelectedModalIndex(null);

@@ -58,7 +58,12 @@ export default function App() {
   // Handle Publish Button Click
   const handlePublish = async () => {
     if (!selectedTrigger?.id) {
-      alert("Please select a trigger before publishing."); // Alert if no trigger selected
+      alert("Please select a trigger before publishing.");
+      return;
+    }
+
+    if (selectedActions.length === 0) {
+      alert("Please select at least one action before publishing.");
       return;
     }
 
@@ -78,20 +83,20 @@ export default function App() {
       });
 
       if (response.status === 200) {
-        alert("Process published successfully!"); // Success message
-        router.push("/dashboard"); // Redirect to dashboard on success
+        alert("Process published successfully!");
+        router.push("/dashboard");
       } else {
-        alert("Error publishing the process. Please try again."); // Alert on error
+        alert("Error publishing the process. Please try again.");
       }
     } catch (error) {
       console.error("Error during publishing:", error);
-      alert("Error publishing the process. Please try again."); // Alert on error
+      alert("Error publishing the process. Please try again.");
     }
   };
 
   return (
-    <div className="w-screen h-screen relative">
-      <div className="flex justify-end bg-slate-200 p-4">
+    <div className="w-screen h-screen relative ">
+      <div className="flex justify-end bg-slate-700 p-4">
         <Button onClick={handlePublish}>Publish</Button> {/* Bind Publish Button to handlePublish function */}
       </div>
 
@@ -101,17 +106,17 @@ export default function App() {
           if (node.type === "triggerNode") {
             return {
               ...node,
-              data: { ...node.data, setSelectedTrigger }, // Pass setSelectedTrigger to trigger node
+              data: { ...node.data, setSelectedTrigger },
             };
           } else if (node.type === "actionNode") {
-                return {
-                  ...node,
-                  data: {
-                    ...node.data,
-                    setSelectedActions,
-                    selectedActions 
-                  }
-                }
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                setSelectedActions,
+                selectedActions,
+              }
+            }
           }
           return node;
         })}
@@ -119,9 +124,9 @@ export default function App() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        nodeTypes={nodeTypes} // Include the custom TriggerNode in nodeTypes
+        nodeTypes={nodeTypes}
         fitView
-        style={{ background: "#f0f0f0" }}
+        className="bg-black"
       />
     </div>
   );

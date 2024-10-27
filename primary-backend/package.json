@@ -21,10 +21,10 @@
     "express": "^4.21.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.15",
-    "prisma": "^5.19.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.16"
+    "@types/nodemailer": "^6.4.16",
+    "prisma": "^5.21.1"
   }
 }

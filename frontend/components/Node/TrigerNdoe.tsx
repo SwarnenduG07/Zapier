@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Handle } from "reactflow"; // Import Handle from React Flow
 import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 
-const TriggerNode = ({ data }) => {
+const TriggerNode = ({ data }: { data: any }) => {
   const { availableTriggers } = useAvailableActionsAndTriggers();
   const { setSelectedTrigger } = data; // Get setSelectedTrigger from data passed in props
 
@@ -12,7 +12,7 @@ const TriggerNode = ({ data }) => {
   } | null>(null); // State to hold local trigger selection
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleSelectTrigger = (trigger) => {
+  const handleSelectTrigger = (trigger : any) => {
     // Update local state and notify the parent
     setLocalSelectedTrigger(trigger);
     setSelectedTrigger(trigger); // Update the selected trigger in the parent via setSelectedTrigger
@@ -20,13 +20,13 @@ const TriggerNode = ({ data }) => {
   };
 
   return (
-    <div className="bg-[#2d1f00] border border-dotted border-[#e6b800] rounded-lg p-4 shadow-lg text-white w-80 relative">
+    <div className="bg-[#2d1f00] border border-dotted border-[#e6b800] rounded-lg p-4 shadow-lg text-white w-80 relative hover:border-emerald-600 hover:border-spacing-7">
       {/* Output Handle */}
       <Handle
         type="source"
         position="bottom"
         id="output"
-        style={{ background: "#555", bottom: -10 }}
+        className=" rounded-full border border-emerald-600 py-1 px-1"
       />
 
       {/* Trigger Button with Icon */}
