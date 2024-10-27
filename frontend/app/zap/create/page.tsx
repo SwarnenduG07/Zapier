@@ -2,7 +2,7 @@
 import { BACKEND_URL } from "@/app/config";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import ReactFlow, { useNodesState, useEdgesState, addEdge, Background, Controls, MiniMap } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
@@ -10,7 +10,6 @@ import TriggerNode from "@/components/Node/TrigerNdoe";
 import ActionNode from "@/components/Node/ActionTrigger";
 import '@xyflow/react/dist/style.css';
 import { Switch } from "@/components/ui/switch";
-
 
 const gridSize = 20;
 
@@ -105,62 +104,70 @@ export default function App() {
     setIsDarkMode(!isDarkMode);
   };
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.style.backgroundColor = '#111827'; 
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.style.backgroundColor = '#ffffff'; 
+    }
+  }, [isDarkMode]);
+
   return (
-    <div className={`w-screen h-screen relative ${isDarkMode ? 'dark' : ''}`}>
-
-
-      <div className="flex justify-between items-center p-4 bg-gradient-to-tl from-20% from-neutral-600  to-neutral-900  dark:bg-gray-800 transition-colors duration-200 backdrop:back">
-        <div 
-          
-        >
+    <div className="h-screen flex flex-col">
+      <div className="bg-white dark:bg-gray-900">
+        <div className="flex justify-between items-center mx-28 mr-56 mt-3 p-1.5 rounded-2xl bg-gradient-to-bl from-20% from-neutral-200  to-neutral-400 dark:from-neutral-700 dark:to-neutral-900  backdrop-blur-xl">
           <Switch
             checked={isDarkMode}
             onCheckedChange={toggleDarkMode}
           />
+          
+          <Button 
+            onClick={handlePublish} 
+            className="text-clip bg-transparent  bg-gradient-to-r from-neutral-800 to-zinc-900 border border-neutral-800 dark:from-purple-800 dark:to-purple-800 dark:text-neutral-100 mr-1.5 rounded-full w-18 h-9"
+          >
+            Publish
+          </Button>
         </div>
-        <Button 
-          onClick={handlePublish} 
-          className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-full"
-        >
-          Publish
-        </Button>
       </div>
 
-      {/* Render React Flow with Nodes and Edges */}
-      <ReactFlow
-        nodes={nodes.map((node) => {
-          if (node.type === "triggerNode") {
-            return {
-              ...node,
-              data: { ...node.data, setSelectedTrigger },
-            };
-          } else if (node.type === "actionNode") {
-            return {
-              ...node,
-              data: {
-                ...node.data,
-                setSelectedActions,
-                selectedActions,
+      <div className="flex-grow">
+        <ReactFlow
+          nodes={nodes.map((node) => {
+            if (node.type === "triggerNode") {
+              return {
+                ...node,
+                data: { ...node.data, setSelectedTrigger },
+              };
+            } else if (node.type === "actionNode") {
+              return {
+                ...node,
+                data: {
+                  ...node.data,
+                  setSelectedActions,
+                  selectedActions,
+                }
               }
             }
-          }
-          return node;
-        })}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-        className="bg-white dark:bg-gray-900 transition-colors duration-200"
-        snapGrid={[gridSize, gridSize]}
-      >
-        <Background color="#aaa" gap={gridSize} />
-        <Controls />
-        <div className="bg-red-600">
-          <MiniMap/>
-        </div>
-      </ReactFlow>
+            return node;
+          })}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+          className="bg-white dark:bg-gray-900 transition-colors duration-200"
+          snapGrid={[gridSize, gridSize]}
+        >
+          <Background color="#aaa" gap={gridSize} />
+          <Controls />
+          <div className="bg-red-600">
+            <MiniMap/>
+          </div>
+        </ReactFlow>
+      </div>
     </div>
   );
 }
