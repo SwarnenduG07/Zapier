@@ -71,3 +71,25 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .dark .react-flow__node {
+    @apply bg-gray-700 text-white;
+  }
+
+  .dark .react-flow__edge-path {
+    @apply stroke-white;
+  }
+
+  .dark .react-flow__attribution {
+    @apply bg-opacity-20 bg-white;
+  }
+
+  .dark .react-flow__controls {
+    @apply bg-gray-700;
+  }
+
+  .dark .react-flow__controls-button {
+    @apply bg-gray-800 text-white border-gray-600;
+  }
+}
