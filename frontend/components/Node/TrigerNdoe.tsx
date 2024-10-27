@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import { Handle } from "reactflow"; // Import Handle from React Flow
+import { Handle, Position } from "reactflow"; 
 import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 
 const TriggerNode = ({ data }: { data: any }) => {
   const { availableTriggers } = useAvailableActionsAndTriggers();
-  const { setSelectedTrigger } = data; // Get setSelectedTrigger from data passed in props
+  const { setSelectedTrigger } = data; 
 
   const [selectedTrigger, setLocalSelectedTrigger] = useState<{
     id: string;
     name: string;
-  } | null>(null); // State to hold local trigger selection
+  } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleSelectTrigger = (trigger : any) => {
-    // Update local state and notify the parent
+   
     setLocalSelectedTrigger(trigger);
-    setSelectedTrigger(trigger); // Update the selected trigger in the parent via setSelectedTrigger
+    setSelectedTrigger(trigger); 
     setIsModalVisible(false);
   };
 
@@ -24,9 +24,9 @@ const TriggerNode = ({ data }: { data: any }) => {
       {/* Output Handle */}
       <Handle
         type="source"
-        position="bottom"
+        position={Position.Bottom}
         id="output"
-        className=" rounded-full border border-emerald-600 py-1 px-1"
+        className="rounded-full border border-emerald-600 py-1 px-1"
       />
 
       {/* Trigger Button with Icon */}
@@ -47,9 +47,13 @@ const TriggerNode = ({ data }: { data: any }) => {
       {/* Modal for selecting Trigger */}
       {isModalVisible && (
         <TriggerModal
-          availableTriggers={availableTriggers}
+          availableTriggers={availableTriggers.map(trigger => ({
+            id: trigger.id.toString(),
+            name: trigger.name,
+            image: trigger.image
+          }))}
           onClose={() => setIsModalVisible(false)}
-          onSelectTrigger={handleSelectTrigger} // Pass handleSelectTrigger to update both local and parent state
+          onSelectTrigger={handleSelectTrigger} 
         />
       )}
     </div>
@@ -87,10 +91,10 @@ function TriggerModal({
             <div
               key={trigger.id}
               onClick={() => onSelectTrigger(trigger)}
-              className="flex items-center p-2 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100"
+              className="flex items-center p-2 border border-red-800 rounded-lg cursor-pointer hover:bg-gray-100"
             >
-              <img src={trigger.image} alt={trigger.name} className="w-8 h-8 rounded-full mr-4" />
-              <span>{trigger.name}</span>
+              <img src={trigger.image} alt={trigger.name} className="w-8 h-8 rounded-full mr-4 " />
+              <span className="text-black">{trigger.name}</span>
             </div>
           ))}
         </div>

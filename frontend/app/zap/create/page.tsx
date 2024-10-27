@@ -10,27 +10,35 @@ import TriggerNode from "@/components/Node/TrigerNdoe";
 import ActionNode from "@/components/Node/ActionTrigger";
 import '@xyflow/react/dist/style.css';
 import { Switch } from "@/components/ui/switch";
+import { Node, NodeProps } from 'reactflow';
 
 const gridSize = 20;
 
-// Define the node types mapping
-const nodeTypes = {
-  triggerNode: (props : any) => <TriggerNode {...props} setSelectedTrigger={props.setSelectedTrigger} />,
-  actionNode: (props: any) => <ActionNode {...props} setSelectedActions={props.setSelectedActions} />,
+
+type NodeData = {
+  label: string;
+  setSelectedTrigger?: React.Dispatch<React.SetStateAction<{ id: string; name: string; } | null>>;
+  setSelectedActions?: React.Dispatch<React.SetStateAction<{ index: number; availableActionId: string; availableActionName: string; metadata: any; }[]>>;
+  selectedActions?: { index: number; availableActionId: string; availableActionName: string; metadata: any; }[];
 };
 
-// Initial set of nodes with one Trigger Node and one Action Node
-const initialNodes = [
+
+const nodeTypes = {
+  triggerNode: TriggerNode as React.FC<NodeProps<NodeData>>,
+  actionNode: ActionNode as React.FC<NodeProps<NodeData>>,
+};
+
+const initialNodes: Node<NodeData>[] = [
   {
     id: "trigger-1",
     position: { x: 50, y: 50 },
-    data: { label: "Trigger Node", setSelectedTrigger: null }, // Add setSelectedTrigger to TriggerNode data
+    data: { label: "Trigger Node" },
     type: "triggerNode",
   },
   {
     id: "action-1",
     position: { x: 50, y: 150 },
-    data: { label: "Action Node" , setSelectedActions : null},
+    data: { label: "Action Node" },
     type: "actionNode",
   },
 ];
@@ -59,7 +67,7 @@ export default function App() {
     [setEdges]
   );
 
-  // Handle Publish Button Click
+  
   const handlePublish = async () => {
     if (!selectedTrigger?.id) {
       alert("Please select a trigger before publishing.");
@@ -71,7 +79,7 @@ export default function App() {
       return;
     }
 
-    // Prepare the data for publishing
+   
     try {
       const response = await axios.post(`${BACKEND_URL}/api/v1/zap`, {
         availableTriggerId: selectedTrigger.id,
@@ -87,7 +95,6 @@ export default function App() {
       });
 
       if (response.status === 200) {
-        alert("Process published successfully!");
         router.push("/dashboard");
       } else {
         alert("Error publishing the process. Please try again.");
@@ -117,7 +124,7 @@ export default function App() {
   return (
     <div className="h-screen flex flex-col">
       <div className="bg-white dark:bg-gray-900">
-        <div className="flex justify-between items-center mx-28 mr-56 mt-3 p-1.5 rounded-2xl bg-gradient-to-bl from-20% from-neutral-200  to-neutral-400 dark:from-neutral-700 dark:to-neutral-900  backdrop-blur-xl">
+        <div className="flex justify-between items-center md:mx-28 mx-12 mt-3 p-1.5 rounded-2xl bg-gradient-to-bl from-20% from-neutral-200  to-neutral-400 dark:from-neutral-700 dark:to-neutral-900  backdrop-blur-xl">
           <Switch
             checked={isDarkMode}
             onCheckedChange={toggleDarkMode}
@@ -161,7 +168,7 @@ export default function App() {
           className="bg-white dark:bg-gray-900 transition-colors duration-200"
           snapGrid={[gridSize, gridSize]}
         >
-          <Background color="#aaa" gap={gridSize} />
+          <Background />
           <Controls />
           <div className="bg-red-600">
             <MiniMap/>

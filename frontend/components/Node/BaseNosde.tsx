@@ -1,8 +1,10 @@
 import React from 'react'
 
-const BaseNosde = () => {
+ const BaseNosde = ({data} : {data : any}) => {
   return (
-    <div>BaseNosde</div>
+    <div>
+         
+    </div>
   )
 }
 

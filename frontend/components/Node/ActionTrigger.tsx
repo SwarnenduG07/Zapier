@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Handle } from "reactflow";
+import { Handle, Position } from "reactflow";
 import { useAvailableActionsAndTriggers } from "@/hooks/useactionTrigger";
 import { Button } from "@/components/ui/button";
 import { Input } from "../Input";
@@ -9,19 +9,15 @@ const ActionNode = ({ data }: { data: any }) => {
   const { availableActions } = useAvailableActionsAndTriggers();
   const {  selectedActions ,setSelectedActions } = data;
 
-  const arry = [
-    "2", "234","34","3"
-  ]
-
   const [selectedModelIndex, setSelectedModalIndex] = useState<number | null>(null);
 
   return (
     <div className="bg-[#1f2d00] border border-dotted border-[#b8e600] rounded-lg p-4 shadow-lg text-white w-80 relative">
       <Handle
         type="target"
-        position="top"
+        position={Position.Top}
         id="input"
-        style={{ background: "#555", top: -10 }}
+        className="rounded-full border border-emerald-600 py-1 px-1"
       />
 
       <div className="flex items-center space-x-2 mb-2">
@@ -53,7 +49,11 @@ const ActionNode = ({ data }: { data: any }) => {
 
       {selectedModelIndex !== null && (
         <Modal
-          availableItems={availableActions}
+          availableItems={availableActions.map(action => ({
+            id: action.id.toString(),
+            name: action.name,
+            image: action.image
+          }))}
           onSelect={(props: null | { name: string; id: string; metadata: any }) => {
             if (props === null) {
               setSelectedModalIndex(null);
@@ -124,8 +124,8 @@ function Modal({ index, onSelect, availableItems }: { index: number, onSelect: (
                                     id,
                                     name
                                 })
-                            }} className="flex border p-4 cursor-pointer hover:bg-slate-100">
-                                <img src={image} width={30} className="rounded-full" /> <div className="flex flex-col justify-center"> {name} </div>
+                            }} className="flex border p-4 cursor-pointer hover:bg-slate-100 border-red-800">
+                                <img src={image} width={35} className="rounded-full" /> <div className="flex flex-col justify-center text-black ml-1.5"> {name} </div>
                             </div>
                         })}</div>}                    
                 </div>
