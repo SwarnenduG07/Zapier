@@ -20,15 +20,15 @@ export const NavBar = () => {
     };
 
     return (
-        <nav className='border border-purple-500 rounded-2xl flex justify-between mx-48 mt-4 p-1'>
-            <div className='ml-10 text-xl font-bold font-mono flex items-center'>
+        <nav className='fixed top-0 left-0 right-0 border border-neutral-800 rounded-2xl flex justify-between lg:mx-48 md:mx-24 mx-16 mt-4 p-1 backdrop-blur-sm bg-neutral-800/80'>
+            <div className='ml-10 text-lg font-bold font-mono flex items-center text-neutral-100'>
                 ChainX
             </div>
             
             <div className='flex space-x-3 mr-10'>
                 {!isLoggedIn ? (
                     <>
-                     <div className='flex items-center space-x-4'>
+                     <div className='flex items-center space-x-4 text-neutral-100'>
                         
                         <div>
                             <span className=' hover:text-purple-500'>Feature</span>
@@ -46,7 +46,7 @@ export const NavBar = () => {
                             }}>Log in</Button>
                         </div>
                         <div>
-                            <Button className='rounded-xl w-20 h-8 bg-amber-600 hover:bg-amber-800 hover:shadow-md' onClick={() => {
+                            <Button className='rounded-xl w-20 h-8 bg-purple-600 hover:bg-purple-700 hover:shadow-md' onClick={() => {
                                 router.push("/signup")
                             }}>Signup</Button>
                         </div>

@@ -10,6 +10,8 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
+			customPurple: '#5900E4',
+			darkPurple: '#OD001B',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -55,7 +57,10 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+		backgroundImage: {
+            // 'gradient-radial': 'radial-gradient(circle, rgba(89,0,228,1), rgba(20,0,50,1))'
+		},
   	}
   },
   plugins: [require("tailwindcss-animate")],
