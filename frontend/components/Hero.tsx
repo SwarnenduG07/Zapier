@@ -9,11 +9,12 @@ const Hero = () => {
   return (
     <div className=''>
         <div className='flex justify-center'>
-            <div className='text-5xl font-bold text-center pt-8 max-w-lg text-neutral-50'>
-                <h1 className='text-5xl font-bold text-center pt-8 max-w-lg text-neutral-50'>
+            <div className=' text-center pt-20 text-neutral-50'>
+                <h1 className='text-5xl font-thin text-center pt-8  text-neutral-50 '>
                     The No-Code automation platform 
                 </h1>
-                Automate as fast as you can type
+                <h1 className='text-3xl font-'>Automate as fast as you can type</h1>
+                
             </div>
         </div>        
         <div className='flex justify-center'>
